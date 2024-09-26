@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const { hashPassword } = require('../utils/helper')
 
 const userSchema = new mongoose.Schema({
     name:{
@@ -31,5 +32,12 @@ const userSchema = new mongoose.Schema({
 },
 { timestamps : true}
 );
+
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) {
+        next();
+    }
+    this.password = await hashPassword(this.password);
+});
 
 module.exports = mongoose.model("User", userSchema);
