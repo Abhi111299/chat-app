@@ -44,13 +44,14 @@ const loginUser = catchAsyncErrors(async (req, res, next) => {
 
 });
 
-const logout = catchAsyncErrors(async (req, res, next) => { console.log("Abhishek");
+const logout = catchAsyncErrors(async (req, res, next) => {
     req.session.destroy();
     res.redirect('/api/v1/');
 });
 
 const loadDashboard = catchAsyncErrors(async (req, res, next) => {
-    res.render('dashboard', {user: req.session.user})
+    var users = await User.find({ _id : { $nin : [req.session.user._id]}})
+    res.render('dashboard', {user: req.session.user, users:users});
 });
 
 module.exports = {

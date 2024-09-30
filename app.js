@@ -13,7 +13,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false }  // Set true for HTTPS
 }));
-
+app.use(express.static('public'));
 app.use('/api/v1', user);
 app.set('view engine', 'ejs');
 app.set('views', './views');
