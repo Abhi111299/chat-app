@@ -16,15 +16,17 @@ const io = socketIo(server);
 
 var usp = io.of('/user-namespace');
 
-usp.on('connection',async function (socket) {
+usp.on('connection',async (socket) => {
     console.log("User connected");
     var user_id = socket.handshake.auth.token;
     await User.findByIdAndUpdate({_id: user_id}, {$set:{ is_online: '1'}});
+    socket.broadcast.emit('getOnlineUser', { user_id : user_id});
 
-    socket.on('disconnect',async function () {
+    socket.on('disconnect',async  () => {
         console.log("User disconnected");
         var user_id = socket.handshake.auth.token;
         await User.findByIdAndUpdate({_id: user_id}, {$set:{ is_online: '0'}});
+        socket.broadcast.emit('getOfflineUser', { user_id : user_id});
     });
 });
 
