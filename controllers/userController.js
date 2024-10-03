@@ -1,4 +1,5 @@
 const User = require('../models/UserModel');
+const Chat = require('../models/ChatModel');
 // const ErrorHandler = require('../utils/errorHandler');
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const sendToken = require('../utils/jwtToken');
@@ -54,11 +55,20 @@ const loadDashboard = catchAsyncErrors(async (req, res, next) => {
     res.render('dashboard', {user: req.session.user, users:users});
 });
 
+const saveChat = catchAsyncErrors(async (req,res) => {
+    const { sender_id, receiver_id, message } = req.body;
+    const chat = await Chat.create({
+        sender_id, receiver_id, message
+    });
+    res.status(201).json({ success: true, message: "Message sent successfully", data: chat });
+})
+
 module.exports = {
     registerUser,
     loadRegisterUser,
     loginUser,
     loadLoginUser,
     loadDashboard,
-    logout
+    logout,
+    saveChat
 }
