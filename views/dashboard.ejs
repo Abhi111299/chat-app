@@ -61,8 +61,29 @@
 
             $('.start-head').hide();
             $('.chat-section').show();
+
+            socket.emit('existchat', {receiver_id: receiver_id, sender_id: sender_id});
         })
     })
+
+    socket.on('loadOldChats', (data) => {
+        $('#chat-container').html('');
+        var chats = data.chats;
+        let html = '';
+        for(let x = 0; x < chats.length; x++){
+            let addClass = '';
+            if(chats[x]['sender_id'] == sender_id){
+                addClass = 'current-user-chat';
+            }
+            else{
+                addClass = 'distance-user-chat';
+            }
+            html += `<div class='`+addClass+`'>
+                            <h5>`+chats[x]['message']+`</h5>    
+                        </div>`
+        }
+        $('#chat-container').append(html);
+    } )
 
     socket.on('getOnlineUser', function (data) {
         $('#'+data.user_id+'-status').text('Online');
@@ -98,9 +119,9 @@
                     $('#chat-container').append(html);
                     socket.emit('newChat', response.data);
                 }else{
-                    alert(data);
+                    alert(response);
                 }
-            }
+             }
         });
     })
 
