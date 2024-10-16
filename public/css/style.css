@@ -8369,3 +8369,7 @@ a[data-toggle="collapse"] {
   color: black;
   margin: 10px;
 }
+
+.fa-trash{
+  color: red;
+}
