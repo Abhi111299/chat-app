@@ -63,6 +63,13 @@ const saveChat = catchAsyncErrors(async (req,res) => {
     res.status(201).json({ success: true, message: "Message sent successfully", data: chat });
 })
 
+const deletechat = catchAsyncErrors(async (req,res) => {
+   
+    const deleteChat = await Chat.deleteOne({
+        _id: req.body.id });
+    res.status(201).json({ success: true, message: "Message Deleted successfully", data: deleteChat });
+})
+
 module.exports = {
     registerUser,
     loadRegisterUser,
@@ -70,5 +77,6 @@ module.exports = {
     loadLoginUser,
     loadDashboard,
     logout,
-    saveChat
+    saveChat,
+    deletechat
 }
