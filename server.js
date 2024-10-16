@@ -4,6 +4,7 @@ const connectDB = require('./config/database');
 const http = require('http');
 const socketIo = require('socket.io');
 const User = require('./models/UserModel');
+const Chat = require('./models/ChatModel');
 
 dotenv.config({path: "config/.env"});
 connectDB();
@@ -28,6 +29,19 @@ usp.on('connection',async (socket) => {
         await User.findByIdAndUpdate({_id: user_id}, {$set:{ is_online: '0'}});
         socket.broadcast.emit('getOfflineUser', { user_id : user_id});
     });
+
+    socket.on('newChat', (data)=>{
+        socket.broadcast.emit('loadNewChat', data);
+    })
+
+    socket.on('existchat', async (data) => {
+        var chats = await Chat.find({ $or : [
+            {sender_id : data.sender_id, receiver_id : data.receiver_id},
+            {sender_id : data.receiver_id, receiver_id : data.sender_id}
+        ]})
+
+        socket.emit('loadOldChats', {chats : chats});
+    })
 });
 
 server.listen(port, () => {
