@@ -42,6 +42,9 @@ usp.on('connection',async (socket) => {
 
         socket.emit('loadOldChats', {chats : chats});
     })
+    socket.on('chatDeleted', function(id){
+        socket.broadcast.emit('chatMessageDeleted', id)
+    })
 });
 
 server.listen(port, () => {
