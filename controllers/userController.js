@@ -70,6 +70,13 @@ const deletechat = catchAsyncErrors(async (req,res) => {
     res.status(201).json({ success: true, message: "Message Deleted successfully", data: deleteChat });
 })
 
+const updatechat = catchAsyncErrors(async (req,res) => {
+   
+    const updatechat = await Chat.findByIdAndUpdate({
+        _id: req.body.id }, {$set: {message: req.body.message}});
+    res.status(201).json({ success: true, message: "Message Updated successfully", data: updatechat });
+})
+
 module.exports = {
     registerUser,
     loadRegisterUser,
@@ -78,5 +85,6 @@ module.exports = {
     loadDashboard,
     logout,
     saveChat,
-    deletechat
+    deletechat,
+    updatechat
 }
