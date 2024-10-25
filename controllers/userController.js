@@ -38,6 +38,7 @@ const loginUser = catchAsyncErrors(async (req, res, next) => {
     const isPasswordMatched = await comparePassword(password, user.password);
     if(isPasswordMatched){
         req.session.user = user;
+        res.cookie(`user`, JSON.stringify(user));
         res.redirect('/api/v1/dashboard');
     }else{
         res.render('login', {message : "Email and password is incorrect"})
@@ -46,6 +47,7 @@ const loginUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 const logout = catchAsyncErrors(async (req, res, next) => {
+    res.clearCookie(`user`);
     req.session.destroy();
     res.redirect('/api/v1/');
 });
