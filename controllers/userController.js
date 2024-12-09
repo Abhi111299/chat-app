@@ -1,5 +1,6 @@
 const User = require('../models/UserModel');
 const Chat = require('../models/ChatModel');
+const Group = require('../models/GroupModel');
 // const ErrorHandler = require('../utils/errorHandler');
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const sendToken = require('../utils/jwtToken');
@@ -12,7 +13,7 @@ const registerUser = catchAsyncErrors(async (req, res, next) => {
         name, email, password,
         image: 'images/'+req.file.filename
     });
-    res.render('register',{message: "Registration successfully"})
+    res.render('register',{message: "Regissstration successfully"})
     // sendToken(user, 201, res);
 });
 
@@ -31,14 +32,14 @@ const loginUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Please enter email and password", 401));
     }
 
-    const user = await User.findOne({ email }).select("+password");
-    if (!user) {
+    const userData = await User.findOne({ email }).select("+password");
+    if (!userData) {
         res.render('login', {message : "Email and password is incorrect"})
     }
-    const isPasswordMatched = await comparePassword(password, user.password);
+    const isPasswordMatched = await comparePassword(password, userData.password);
     if(isPasswordMatched){
-        req.session.user = user;
-        res.cookie(`user`, JSON.stringify(user));
+        req.session.user = userData;
+        res.cookie(`user`, JSON.stringify(userData));
         res.redirect('/api/v1/dashboard');
     }else{
         res.render('login', {message : "Email and password is incorrect"})
@@ -79,6 +80,24 @@ const updatechat = catchAsyncErrors(async (req,res) => {
     res.status(201).json({ success: true, message: "Message Updated successfully", data: updatechat });
 })
 
+const loadGroups = catchAsyncErrors(async (req,res) => {
+   const groups = Group.find({ creator_id: req.session.user._id })
+    res.render('groups')
+})
+
+const createGroup = catchAsyncErrors(async (req,res) => {
+    console.log("session data", req.session.user._id);
+    const group = new Group({
+        creator_id: req.session.user._id,
+        name: req.body.name,
+        limit: req.body.limit,
+        image: 'image/'+req.file.filename
+    })
+
+    await group.save();
+    res.render('groups', {message : req.body.name+" Group Created successfully"});
+ })
+
 module.exports = {
     registerUser,
     loadRegisterUser,
@@ -88,5 +107,7 @@ module.exports = {
     logout,
     saveChat,
     deletechat,
-    updatechat
+    updatechat,
+    loadGroups,
+    createGroup
 }

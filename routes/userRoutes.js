@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { loadLoginUser, saveChat, updatechat, deletechat, logout, loadDashboard, loadRegisterUser, loginUser, registerUser } = require('../controllers/userController')
+const { loadGroups, createGroup, loadLoginUser, saveChat, updatechat, deletechat, logout, loadDashboard, loadRegisterUser, loginUser, registerUser } = require('../controllers/userController')
 const upload = require('../utils/multerConfig');
 const { isLogout, isLogin } = require('../middlewares/auth');
 
@@ -15,7 +15,11 @@ router.route('/logout').post(logout);
 router.route('/savechat').post(saveChat);
 router.route('/deletechat').post(deletechat);
 router.route('/updatechat').post(updatechat);
+router.route('/groups').get(loadGroups);
+router.route('/updatechat').post(updatechat);
+router.route('/groups').post(upload.single('image'), createGroup);
 router.route('*').get(loadLoginUser);
+
 // router.route("/login").post(loginUser);
 
 module.exports = router;

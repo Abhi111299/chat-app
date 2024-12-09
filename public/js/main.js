@@ -25,7 +25,8 @@ function getCookie(name) {
 	));
 	return matches ? decodeURIComponent(matches[1]) : undefined;
 }
-var userData = getCookie(name);
+var userData = JSON.parse(getCookie('user'));
+console.log(userData);
 var sender_id = userData._id;
     var receiver_id;
     var socket = io('/user-namespace', {
@@ -121,7 +122,7 @@ var sender_id = userData._id;
         let html = 
         `
             <div class="distance-user-chat" id="`+data._id+`">
-                <h5>`+data.message+`</h5>    
+                <h5><span>`+data.message+`</span></h5>    
             </div>
         `
         $('#chat-container').append(html);
